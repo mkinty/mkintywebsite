@@ -1,0 +1,56 @@
+version: "3.9" # Version de Docker Compose (3.9 recommandée pour compatibilité avec les fonctionnalités récentes)
+
+services:
+  # ------------------------------
+  # Service web : serveur Django
+  # ------------------------------
+  web:
+    build:
+      context: . # Le contexte de build est la racine du projet (Dockerfile.prod se trouve à docker/django/)
+      dockerfile: docker/django/Dockerfile.prod # Dockerfile de production pour Django
+    ports:
+      - "8000:8000" # Mappe le port 8000 du container sur le port 8000 de l'hôte (accès depuis le navigateur)
+    env_file:
+      - .env.prod # Fichier contenant les variables d'environnement pour la prod (DB, secrets, etc.)
+    depends_on:
+      - db # Assure que la DB démarre avant Django
+      - redis # Assure que Redis démarre avant Django
+
+  # ------------------------------
+  # Service Celery : worker pour tâches asynchrones
+  # ------------------------------
+  celery:
+    build:
+      context: . # Contexte de build = racine du projet
+      dockerfile: docker/celery/Dockerfile.prod # Dockerfile prod spécifique à Celery
+    env_file:
+      - .env.prod # Même fichier d'environnement que Django
+    depends_on:
+      - db # Celery doit attendre que la DB soit prête
+      - redis # Celery doit attendre que Redis soit prêt
+
+  # ------------------------------
+  # Service PostgreSQL
+  # ------------------------------
+  db:
+    image: postgres:15 # Image officielle PostgreSQL version 15
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB} # Nom de la base depuis .env.prod
+      POSTGRES_USER: ${POSTGRES_USER} # Nom de l'utilisateur DB
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # Mot de passe DB
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Persistance des données via volume Docker
+
+  # ------------------------------
+  # Service Redis pour Celery
+  # ------------------------------
+  redis:
+    image: redis:7 # Image officielle Redis version 7
+
+# ------------------------------
+# Déclaration des volumes Docker
+# ------------------------------
+volumes:
+  # Volume nommé pour PostgreSQL
+  # Docker stockera physiquement les données sur l'hôte pour qu'elles persistent même si le container DB est supprimé
+  postgres_data: {}

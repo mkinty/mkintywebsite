@@ -1,0 +1,52 @@
+# ------------------------------
+# Étape 1 : Builder (multi-stage build)
+# ------------------------------
+FROM python:3.12-slim AS builder
+
+WORKDIR /app  # Dossier de travail dans le container
+
+# Installer les dépendances système nécessaires pour compiler les paquets Python
+RUN apt-get update && apt-get install -y \ 
+    build-essential \ 
+    libpq-dev \ 
+    curl \ 
+    && rm -rf /var/lib/apt/lists/*
+
+# Installer uv (gestionnaire de dépendances Python via pyproject.toml)
+RUN pip install uv
+
+# Copier les fichiers de dépendances et synchroniser
+COPY pyproject.toml uv.lock* ./
+RUN uv sync
+
+# ------------------------------
+# Étape 2 : Image finale (plus légère, sans outils de compilation)
+# ------------------------------
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# Installer juste les dépendances système nécessaires pour exécuter le projet
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copier les packages Python installés depuis l'étape builder
+COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
+# → Cela inclut Django, DRF, Celery, Redis, Gunicorn, etc.
+
+# Copier le code source
+COPY src/ src/
+
+# Exposer le port 8000 (Gunicorn écoute ici)
+EXPOSE 8000
+
+# ------------------------------
+# CMD par défaut pour la production
+# ------------------------------
+# Gunicorn : serveur WSGI performant pour la prod
+CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]
+# --bind : expose le serveur sur toutes les interfaces du container
+# --workers : nombre de processus Gunicorn (3 ici, ajustable selon ressources)

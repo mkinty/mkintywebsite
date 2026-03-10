@@ -1,0 +1,48 @@
+# docker/celery/Dockerfile.dev
+
+# Image Python légère basée sur Debian
+# Elle contient seulement le minimum pour exécuter Python
+FROM python:3.12-slim
+
+# Empêche Python de bufferiser les logs
+# Cela permet de voir les logs Celery immédiatement dans docker logs
+ENV PYTHONUNBUFFERED=1
+
+# Définit le dossier de travail dans le container
+# Toutes les commandes suivantes seront exécutées depuis /app
+WORKDIR /app
+
+# Installer les dépendances système nécessaires
+# build-essential : outils de compilation pour certains packages Python
+# libpq-dev : bibliothèque PostgreSQL utilisée par psycopg
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*  # nettoyage pour réduire la taille de l'image
+
+# Installer :
+# - uv : gestionnaire de dépendances Python basé sur pyproject.toml
+# - celery : gestionnaire de tâches asynchrones
+# - redis : client Redis utilisé comme broker
+# - django + djangorestframework : nécessaires si Celery utilise le contexte Django
+# - psycopg[binary] : driver PostgreSQL
+# - python-dotenv : chargement des variables d'environnement depuis .env
+RUN pip install uv celery redis django djangorestframework psycopg[binary] python-dotenv
+
+# Copier les fichiers de dépendances Python
+# Cela permet à Docker de mettre en cache les dépendances
+COPY pyproject.toml uv.lock* ./
+
+# Synchroniser les dépendances avec uv
+# Installe toutes les dépendances définies dans pyproject.toml
+RUN uv sync
+
+# Copier le code source du projet Django dans le container
+# Le projet est situé dans le dossier src
+COPY src/ src/
+
+# Commande exécutée au démarrage du container
+# -A config : indique le module Django contenant la configuration Celery
+# worker : lance un worker Celery
+# --loglevel=info : niveau de logs
+CMD ["celery", "-A", "config", "worker", "--loglevel=info"]

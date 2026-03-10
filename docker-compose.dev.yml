@@ -1,0 +1,57 @@
+version: "3.9" # Version de Docker Compose
+
+services:
+  # ------------------------------
+  # Service web : serveur Django en dev
+  # ------------------------------
+  web:
+    build:
+      context: . # Contexte de build = racine du projet
+      dockerfile: docker/django/Dockerfile.dev # Dockerfile spécifique au dev
+    volumes:
+      - .:/app # Monte le code source local dans le container pour développement en live (hot reload)
+    ports:
+      - "8000:8000" # Expose le port 8000 sur l'hôte (accessible depuis le navigateur)
+    env_file:
+      - .env.dev # Fichier d'environnement pour dev (mots de passe, DB, secrets locaux)
+    depends_on:
+      - db # Attend que la DB démarre avant Django
+      - redis # Attend que Redis démarre avant Django
+
+  # ------------------------------
+  # Service Celery : worker pour dev
+  # ------------------------------
+  celery:
+    build:
+      context: . # Contexte de build = racine du projet
+      dockerfile: docker/celery/Dockerfile.dev # Dockerfile spécifique au dev
+    env_file:
+      - .env.dev # Même fichier que pour web
+    depends_on:
+      - db # Celery attend que la DB soit prête
+      - redis # Celery attend que Redis soit prêt
+
+  # ------------------------------
+  # Service PostgreSQL pour dev
+  # ------------------------------
+  db:
+    image: postgres:15 # Version officielle PostgreSQL
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB} # Nom de la base depuis .env
+      POSTGRES_USER: ${POSTGRES_USER} # Utilisateur DB
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # Mot de passe DB
+    # Dans le dev, on peut ne pas utiliser de volume persistant (les données disparaissent si container est supprimé)
+    # volumes: 
+    #   - postgres_data:/var/lib/postgresql/data  # Optionnel pour persistance en dev
+
+    # ------------------------------
+    # Redis pour dev (Celery)
+    # ------------------------------
+  redis:
+    image: redis:7 # Redis officiel version 7
+
+# ------------------------------
+# Volumes (optionnel en dev)
+# ------------------------------
+# volumes:
+#   postgres_data: {}  # Si tu veux persister les données en dev
