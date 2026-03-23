@@ -15,7 +15,8 @@ build:
 
 # Lancer containers dev
 up:
-	$(COMPOSE_DEV) up -d
+	$(COMPOSE_DEV) up
+	#$(COMPOSE_DEV) up -d
 
 # Stop containers
 down:
@@ -27,19 +28,20 @@ logs:
 
 # Django commands
 makemigrations:
-	$(COMPOSE_DEV) exec web python src/manage.py makemigrations
+	$(COMPOSE_DEV) exec web python manage.py makemigrations
 
 migrate:
-	$(COMPOSE_DEV) exec web python src/manage.py migrate
+	$(COMPOSE_DEV) exec web python manage.py migrate
 
 createsuperuser:
-	$(COMPOSE_DEV) exec web python src/manage.py createsuperuser
+	$(COMPOSE_DEV) exec web python manage.py createsuperuser
 
 collectstatic:
-	$(COMPOSE_DEV) exec web python src/manage.py collectstatic --noinput
+	$(COMPOSE_DEV) exec web python manage.py collectstatic
 
 shell:
-	$(COMPOSE_DEV) exec web python src/manage.py shell
+	$(COMPOSE_DEV) exec web python manage.py shell
+
 
 # ==============================
 # Production
@@ -58,7 +60,7 @@ prod-logs:
 	$(COMPOSE_PROD) logs -f
 
 prod-migrate:
-	$(COMPOSE_PROD) exec web python src/manage.py migrate
+	$(COMPOSE_PROD) exec web python manage.py migrate
 
 prod-collectstatic:
-	$(COMPOSE_PROD) exec web python src/manage.py collectstatic --noinput
+	$(COMPOSE_PROD) exec web python manage.py collectstatic --noinput

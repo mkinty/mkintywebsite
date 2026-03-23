@@ -14,4 +14,11 @@ DATABASES = {
     }
 }
 
-STATIC_ROOT = BASE_DIR / "staticfiles"
+# Media files
+MEDIA_URL = os.getenv("MEDIA_URL", "/media/")
+MEDIA_ROOT = os.getenv("MEDIA_ROOT", "/var/www/mkwebsite/media")
+
+# Static files
+STATIC_URL = os.getenv("STATIC_URL", "/static/")
+STATIC_ROOT = os.getenv("STATIC_ROOT", "/var/www/mkwebsite/staticfiles")
+

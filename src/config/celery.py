@@ -1,17 +1,29 @@
 import os
 from celery import Celery
 
-# définir le settings Django
-os.environ.setdefault(
-    "DJANGO_SETTINGS_MODULE",
-    os.getenv("DJANGO_SETTINGS_MODULE", "config.settings.local"),
-)
+# Définit le module de settings Django à utiliser
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.dev")
 
-# créer l'application celery
-app = Celery("mkwebsite")
+# Crée l'application Celery
+app = Celery("config")
 
-# charger la configuration depuis Django settings
+# Charge la configuration depuis les settings Django,
+# avec le préfixe CELERY_ pour ne prendre que les variables CELERY_*
 app.config_from_object("django.conf:settings", namespace="CELERY")
 
-# détecter automatiquement les fichiers tasks.py
+# Auto-détecte les tasks dans toutes les apps installées
 app.autodiscover_tasks()
+
+# Optionnel : affichage de logs plus clairs pour dev
+app.conf.update(
+    task_track_started=True,
+    task_serializer='json',
+    result_serializer='json',
+    accept_content=['json'],
+)
+
+
+# Exemple : tâche test (tu peux supprimer si tu as déjà des tasks)
+@app.task(bind=True)
+def debug_task(self):
+    print(f"Request: {self.request!r}")

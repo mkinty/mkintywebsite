@@ -1,0 +1,18 @@
+{% load static %}
+{% block footer %}
+<div class="logo">
+  <img src="{% static 'img/whitelogo.png' %}" alt="Logo">
+</div>
+<div class="menu right">
+  <a class="item" href="https://www.linkedin.com/in/moustapha-kinty-8288b0153/" target="_blank">LinkedIn</a>
+  <a class="item" href="https://github.com/mkinty" target="_blank">Github</a>
+  <a class="item" href="{% url 'home' %}">Me contacter</a>
+  <div class="items col">
+    <a hx-get="{% url 'users:add-user'%}"
+       hx-target="#dialog"
+       class="item"
+    >Créer un compte</a>
+    <a class="item" href="">Mes candidatures</a>
+  </div>
+</div>
+{% endblock footer %}

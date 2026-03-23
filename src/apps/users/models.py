@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from markdownx.models import MarkdownxField
 
 
 # Create your models here.
@@ -14,12 +15,12 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=30, blank=True)  # optionnel
     last_name = models.CharField(max_length=30, blank=True)  # optionnel
-    profile_image = models.ImageField(
+    avatar = models.ImageField(
         upload_to=user_profile_image_path,
         null=True,
         blank=True
     )
-    description = models.TextField(blank=True, null=True)
+    bio = MarkdownxField()  # <-- champ Markdown WYSIWYG
 
     def __str__(self):
         return self.username

@@ -1,0 +1,15 @@
+{% extends "index.html" %}
+<!-- LOAD -->
+{% load i18n %}
+{% load static %}
+<!-- TITLE -->
+{% block title %}
+Page d'accueil
+{% endblock title %}
+<!-- CONTENT -->
+{% block content %}
+<body>
+    <h1>{{ message }}</h1>
+    <p>Ceci est la page d'accueil.</p>
+</body>
+{% endblock content%}

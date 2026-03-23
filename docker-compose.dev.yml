@@ -8,8 +8,9 @@ services:
     build:
       context: . # Contexte de build = racine du projet
       dockerfile: docker/django/Dockerfile.dev # Dockerfile spécifique au dev
+    command: ["/app/wait-for-it.sh", "db:5432", "--", "python", "manage.py", "runserver", "0.0.0.0:8000"]
     volumes:
-      - .:/app # Monte le code source local dans le container pour développement en live (hot reload)
+      - ./src:/app # Monte le code source local dans le container pour développement en live (hot reload)
     ports:
       - "8000:8000" # Expose le port 8000 sur l'hôte (accessible depuis le navigateur)
     env_file:
@@ -25,6 +26,9 @@ services:
     build:
       context: . # Contexte de build = racine du projet
       dockerfile: docker/celery/Dockerfile.dev # Dockerfile spécifique au dev
+    command: celery -A config worker -l info
+    volumes:
+      - ./src:/app
     env_file:
       - .env.dev # Même fichier que pour web
     depends_on:
@@ -36,10 +40,8 @@ services:
   # ------------------------------
   db:
     image: postgres:15 # Version officielle PostgreSQL
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB} # Nom de la base depuis .env
-      POSTGRES_USER: ${POSTGRES_USER} # Utilisateur DB
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # Mot de passe DB
+    env_file:
+      - .env.dev
     # Dans le dev, on peut ne pas utiliser de volume persistant (les données disparaissent si container est supprimé)
     # volumes: 
     #   - postgres_data:/var/lib/postgresql/data  # Optionnel pour persistance en dev
