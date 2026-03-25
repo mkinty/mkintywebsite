@@ -14,7 +14,9 @@ urlpatterns = [
     # path("api/organizations/", include("apps.organizations.api.urls")),
 
     # Web (templates Django)
-    path("", include("apps.home.web.urls")),
+    path("", include("apps.home.web.urls", namespace="home")),
+    path("users/", include("apps.users.web.urls", namespace="users")),
+    path("auth/", include("apps.authentication.web.urls", namespace="auth")),
 ]
 
 # Servir les fichiers media et statiques seulement en développement

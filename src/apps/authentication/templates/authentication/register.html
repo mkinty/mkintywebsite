@@ -1,0 +1,58 @@
+{% load static %}
+
+
+<div class="register" id="medium">
+  <div class="register-header">
+    Créer un compte
+  </div>
+  <div class="register-content">
+    <form hx-post="{{ request.path }}"
+          hx-target="#dialog"
+          enctype="multipart/form-data"
+          class="ui form"
+    >
+      {% csrf_token %}
+
+      <div class="field">
+        <label>Nom</label>
+        {{ form.last_name }}
+      </div>
+      <div class="field">
+        <label>Prénom</label>
+        {{ form.first_name }}
+      </div>
+      <div class="field">
+        <label>Nom utilisateur</label>
+        {{ form.username }}
+      </div>
+      <div class="field">
+        <label>Adresse email</label>
+        {{ form.email }}
+      </div>
+      <div class="field">
+        <label>Mot de passe</label>
+        {{ form.password }}
+      </div>
+      <div class="field profil">
+        <label>Profil</label>
+        {{ form.avatar }}
+      </div>
+      <div class="field">
+        <label for="{{ form.bio.id_for_label }}">Biographie</label>
+        <div id="quill-container"></div> <!-- Quill injecté ici -->
+        <textarea name="quill-description" id="{{ form.bio.id_for_label }}" hidden>{{ form.bio }}</textarea>
+      </div>
+      <div class="btns actions">
+        <div class="secondary btn" id="cancel"
+        >Annuler
+        </div>
+        <button class="primary btn" type="submit">S'inscrire</button>
+      </div>
+    </form>
+  </div>
+  <div class="register-footer">
+    Vous avez déjà compte? <a hx-get="{% url 'auth:register' %}"
+                              hx-target="#dialog"
+                              class="btn">Connectez-vous</a>
+  </div>
+</div>

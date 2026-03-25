@@ -1,4 +1,4 @@
-from src.apps.users.models import User
+from apps.users.models import User
 
 
 def get_user_by_id(user_id: int):

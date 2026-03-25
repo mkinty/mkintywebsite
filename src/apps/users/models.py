@@ -1,26 +1,17 @@
+# apps/users/models.py
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from markdownx.models import MarkdownxField
-
-
-# Create your models here.
-
-
-def user_profile_image_path(instance, filename):
-    # Stocke les images dans media/users/<username>/<filename>
-    return f'users/{instance.username}/{filename}'
 
 
 class User(AbstractUser):
     email = models.EmailField(unique=True)
-    first_name = models.CharField(max_length=30, blank=True)  # optionnel
-    last_name = models.CharField(max_length=30, blank=True)  # optionnel
-    avatar = models.ImageField(
-        upload_to=user_profile_image_path,
-        null=True,
-        blank=True
-    )
-    bio = MarkdownxField()  # <-- champ Markdown WYSIWYG
+    first_name = models.CharField(max_length=30, blank=True)
+    last_name = models.CharField(max_length=30, blank=True)
+    avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)
+    bio = models.TextField(blank=True)  # champ pour Quill
+
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["username"]
 
     def __str__(self):
-        return self.username
+        return f"{self.first_name} {self.last_name}"

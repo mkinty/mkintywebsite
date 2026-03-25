@@ -1,25 +1,56 @@
-const modal = document.getElementById("modal")
+const modal = document.getElementById("modal");
+const dialog = document.getElementById("dialog");
 
+// Quand HTMX injecte du contenu dans le modal
 htmx.on("htmx:afterSwap", (e) => {
-  // Response targeting #dialog => show the modal
-  if (e.detail.target.id == "dialog") {
-    $('.modal')
-      .modal('show');
-  }
-})
+    if (e.detail.target.id === "dialog") {
+        modal.classList.remove("hidden");
 
-htmx.on("htmx:beforeSwap", (e) => {
-  // Response targeting #dialog => hide the modal
-  if (e.detail.target.id == "dialog" && !e.detail.xhr.response) {
-    $('.modal')
-    .modal('hide');
-    e.detail.shouldSwap = false
-    // Hidden a dialog content after cancel or saving changes
-    document.getElementById("dialog").innerHTML = ""
-  }
-})
+        // Gestion du bouton Annuler
+        const cancel = e.detail.target.querySelector('#cancel');
+        cancel.addEventListener('click', () => {
+            modal.classList.add("hidden");
+            dialog.innerHTML = "";
+            console.log("Modal hidden");
+        });
 
-htmx.on("hidden.bs.modal", () => {
-// Hidden a dialog content after cancel or saving changes
-  document.getElementById("dialog").innerHTML = ""
-})
+        // Gestion du modal
+        const firstChildId = e.detail.target.firstElementChild?.id;
+        dialog.classList.remove("small", "medium", "large");
+        if (firstChildId) dialog.classList.add(firstChildId);
+
+        // Initialiser Quill sur les champs présents
+        const container = e.detail.target.querySelector('#quill-container');
+        const textarea = e.detail.target.querySelector('textarea[name="quill-description"]');
+        if (container && textarea && !container._quillInstance) {
+            const quill = new Quill(container, {
+                theme: 'snow',
+                modules: {
+                    syntax: true,
+                    toolbar: [
+                        [{ 'header': [1,2,3,false] }],
+                        ['bold','italic','underline','strike'],
+                        ['link','image','code-block'],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        [{ 'align': [] }],
+                        ['clean']
+                    ]
+                }
+            });
+            quill.root.innerHTML = textarea.value;
+            textarea.form.addEventListener('submit', () => {
+                textarea.value = quill.root.innerHTML;
+            });
+            container._quillInstance = quill;
+        }
+
+    }
+});
+
+// Fermer le modal si on clique en dehors du dialogue
+modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+        modal.classList.add("hidden");
+        dialog.innerHTML = "";
+    }
+});

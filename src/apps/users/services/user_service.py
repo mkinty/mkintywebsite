@@ -1,4 +1,4 @@
-from src.apps.users.models import User
+from apps.users.models import User
 
 
 def create_user(email, password, username, first_name, last_name, avatar=None, bio=None):

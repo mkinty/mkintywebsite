@@ -67,44 +67,6 @@ a {
   text-decoration: none;
   color: var(--Grey);
 }
-button {
-  font-size: 1.6rem;
-}
-.btns {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem 0;
-}
-.btn {
-  padding: 1rem 1.5rem;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-  border-radius: 2px;
-  transition: all 0.5s ease;
-}
-.btn.primary {
-  background-color: var(--Primary);
-  color: var(--White);
-}
-.btn.primary:hover {
-  background-color: var(--S1);
-  color: var(--White);
-  transition: all 0.5s ease;
-}
-.btn.secondary {
-  background-color: var(--White);
-  border: 1px solid var(--Primary);
-  color: var(--Primary);
-}
-.btn.secondary:hover {
-  color: var(--S1);
-   border: 1px solid var(--S1);
-  transition: all 0.5s ease;
-}
 .container {
   background-color: var(--Silver);
   display: flex;
@@ -123,7 +85,6 @@ button {
   align-items: center;
   justify-content: center;
   z-index: 1000;
-   overflow-y: auto;
 }
 
 .modal-dialog {
@@ -146,6 +107,33 @@ button {
 .hidden {
   display: none;
 }
+/* Container CKEditor */
+.ck-editor__editable {
+  border-radius: 10px !important;
+  border: 1px solid #e5e7eb !important;
+  padding: 12px !important;
+  min-height: 150px;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Toolbar */
+.ck-toolbar {
+  border-radius: 10px 10px 0 0 !important;
+  border: 1px solid #e5e7eb !important;
+  background: #f9fafb !important;
+}
+
+/* Focus effect */
+.ck-editor__editable:focus {
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+/* Texte */
+.ck-content h1 { font-size: 1.5rem; font-weight: bold; }
+.ck-content h2 { font-size: 1.3rem; font-weight: bold; }
+.ck-content p { margin-bottom: 8px; }
+
 /*-- Header --*/
 .header {
   height: 6rem;
@@ -194,11 +182,29 @@ button {
 .menu .item.active {
   color: var(--Black);
   border-bottom: 0.3rem solid var(--Primary);
+  border-radius: 5px;
 }
 .menu .item:hover {
   color: var(--Black);
   transition: all 0.5s ease;
 }
+.btn {
+  padding: 1rem 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: all 0.5s ease;
+}
+.btn.primary {
+  background-color: var(--Primary);
+  color: var(--White);
+}
+.btn:hover {
+  background-color: var(--S1);
+  color: var(--White);
+  transition: all 0.5s ease;
+}
+
 /*-- Content --*/
 .content {
   flex: 1;
@@ -206,55 +212,7 @@ button {
   flex-direction: column;
   padding: 2rem;
 }
-/*-- Register --*/
-.register {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  width: 100%;
-  padding: 1rem;
-  gap: 1rem;
-}
-.register-header {
-  color: var(--D_Grey);
-  font-size: 3rem;
-  font-weight: 700;
-  width: 100%;
-  padding: 0;
-  margin: 0;
-}
-.register-content {
-  width: 100%;
-  padding: 0;
-  margin: 0;
-}
-.field {
-  display: flex;
-  flex-direction: column;
-  padding: 0.5rem 0;
-  width: 100%;
-}
-.field label {
-  color: var(--D_Grey);
-  font-size: 1.6rem;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-}
-.field input {
-  width: 100%;
-  padding: 1rem;
-  border-radius: 2px;
-  border: 1.5px solid var(--Grey);
-}
-.ql-toolbar.ql-snow,
-.ql-container.ql-snow{
-  border: 1.5px solid var(--Grey);
-}
-.register-footer {
-  width: 100%;
-}
+
 /*-- Footer --*/
 .footer {
   height: 10rem;
