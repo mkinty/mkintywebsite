@@ -42,6 +42,38 @@ collectstatic:
 shell:
 	$(COMPOSE_DEV) exec web python manage.py shell
 
+# ==============================
+# Tests
+# ==============================
+
+test:
+	$(COMPOSE_DEV) exec web python manage.py test --keepdb
+
+coverage:
+	$(COMPOSE_DEV) exec web coverage run manage.py test
+	$(COMPOSE_DEV) exec web coverage report
+
+test-users:
+	$(COMPOSE_DEV) exec web python manage.py test apps.users
+
+test-auth:
+	$(COMPOSE_DEV) exec web python manage.py test apps.authentication
+
+# ==============================
+# Documentation (MkDocs)
+# ==============================
+
+docs-init:
+	$(COMPOSE_DEV) exec web mkdocs new docs
+
+docs-serve:
+	$(COMPOSE_DEV) exec web mkdocs serve -a 0.0.0.0:8001
+
+docs-build:
+	$(COMPOSE_DEV) exec web mkdocs build
+
+docs-deploy:
+	$(COMPOSE_DEV) exec web mkdocs gh-deploy
 
 # ==============================
 # Production

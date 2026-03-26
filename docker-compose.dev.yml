@@ -13,6 +13,7 @@ services:
       - ./src:/app # Monte le code source local dans le container pour développement en live (hot reload)
     ports:
       - "8000:8000" # Expose le port 8000 sur l'hôte (accessible depuis le navigateur)
+      - "8001:8001"  # Expose le port 8001 sur l'hôte (accessible depuis le navigateur) pour  MkDocs
     env_file:
       - .env.dev # Fichier d'environnement pour dev (mots de passe, DB, secrets locaux)
     depends_on:

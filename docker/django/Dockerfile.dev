@@ -36,7 +36,11 @@ RUN pip install \
     psycopg[binary] \
     python-dotenv \
     celery \
-    redis
+    redis \
+    coverage \
+    drf-spectacular \
+    mkdocs \
+    mkdocs-material
 
 # ------------------------------
 # Copier les fichiers de dépendances pour uv

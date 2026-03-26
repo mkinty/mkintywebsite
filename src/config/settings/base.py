@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # apps
+    "rest_framework",
+    "drf_spectacular",
     "apps.home",
     "apps.users",
     "apps.authentication",
@@ -110,6 +112,16 @@ USE_TZ = True
 
 # utiliser le users.User de l'app
 AUTH_USER_MODEL = "users.User"
+
+# DRF Spectacular
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+SPECTACULAR_SETTINGS = {
+    "TITLE": "API Django",
+    "DESCRIPTION": "Documentation de l'API",
+    "VERSION": "1.0.0",
+}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/

@@ -27,7 +27,7 @@ RUN apt-get update && apt-get install -y \
 # - django + djangorestframework : nécessaires si Celery utilise le contexte Django
 # - psycopg[binary] : driver PostgreSQL
 # - python-dotenv : chargement des variables d'environnement depuis .env
-RUN pip install uv celery redis django djangorestframework django-markdownx psycopg[binary] python-dotenv
+RUN pip install uv celery redis django djangorestframework django-markdownx psycopg[binary] python-dotenv coverage drf-spectacular mkdocs mkdocs-material
 
 # Copier les fichiers de dépendances Python
 # Cela permet à Docker de mettre en cache les dépendances
